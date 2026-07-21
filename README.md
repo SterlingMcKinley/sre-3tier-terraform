@@ -47,7 +47,6 @@ terraform apply
 ```
 
 Upon successful completion, Terraform will output the target endpoints:
-Outputs:
 
 ```bash
 alb_dns_name = "http://sre-alb-XXXXXXXX.us-east-1.elb.amazonaws.com"
@@ -55,3 +54,5 @@ asg_name     = "sre-asg"
 fis_role_arn = "arn:aws:iam::XXXXXXXXXXX:role/sre-fis-execution-role"
 rds_endpoint = "sre-db-instance.xxxx.us-east-1.rds.amazonaws.com:5432"
 ```
+
+<img width="722" height="162" alt="output1" src="https://github.com/user-attachments/assets/3dd689de-345d-484e-8788-85b7c964b7dc" />
