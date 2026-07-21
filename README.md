@@ -113,6 +113,7 @@ aws fis start-experiment --experiment-template-id <YOUR_EXPERIMENT_TEMPLATE_ID>
 
 (The expected output will be a display in JSON format. Review output and status updates of the experiment.)
 
+<img width="1076" height="487" alt="experiement1" src="https://github.com/user-attachments/assets/81d5ab4e-ce2f-4971-ac0d-af0af08016be" />
 
 While the experient is in-progress the AWS CLI command will update every 2/3 secs
 
