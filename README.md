@@ -93,15 +93,16 @@ watch -n 2 "aws elbv2 describe-target-health --target-group-arn $TG_ARN --query 
 
 8. Chaos Engineering & Resiliency Validation
 
-  Register AWS FIS Experiment Template
+Register AWS FIS Experiment Template
 
-  ```bash
+```bash
 FIS_ROLE_ARN=$(terraform output -raw fis_role_arn)
 
 aws fis create-experiment-template \
-  --role-arn $FIS_ROLE_ARN \
-  --cli-input-json file://chaos_experiment.json
-  ```
+--role-arn $FIS_ROLE_ARN \
+--cli-input-json file://chaos_experiment.json
+```
+
 (The expected output will be a display in JSON format. Locate and copy the EXPERIMENT_TEMPLATE_ID)
 
 9. Execute Failure Injection
@@ -114,11 +115,22 @@ aws fis start-experiment --experiment-template-id <YOUR_EXPERIMENT_TEMPLATE_ID>
 
 <img width="1076" height="487" alt="experiement1" src="https://github.com/user-attachments/assets/97e49c30-76ea-462c-adbd-b7bdd99b3594" />
 
-While the experient is in-progress  the AWS CLI command will update every 2/3 secs
+While the experient is in-progress the AWS CLI command will update every 2/3 secs
 
 <img width="1125" height="227" alt="c3" src="https://github.com/user-attachments/assets/51d3c842-6a04-4c98-86f5-87b0f1976c5e" />
 <img width="1127" height="192" alt="chaos1" src="https://github.com/user-attachments/assets/82dd10c1-65dd-4716-995e-c0e3dd609b4e" />
 <img width="1118" height="210" alt="c2" src="https://github.com/user-attachments/assets/493e28c2-468b-4a33-bec5-fb1dd642a373" />
 <img width="1136" height="195" alt="c4" src="https://github.com/user-attachments/assets/2e5cd573-024c-40d5-b421-8733b40ad8a3" />
 
+## Issues / Lessons Learned
 
+### Transitioning to Native S3 State Locking
+
+Previously, storing remote Terraform state in Amazon S3 required a secondary AWS service—an Amazon DynamoDB table configured with a LockID primary key—to manage state locking and prevent concurrent executions.
+
+CURRENT Best practice: Native S3 state locking (via the use_lockfile = true parameter) uses conditional write requests (If-None-Match) directly inside S3 to manage concurrency. HashiCorp recommends native S3 locking and has deprecated the legacy dynamodb_table argument.
+
+Key Benefits:
+
+- Reduced Complexity & Cost: Eliminates the need to bootstrap, manage, and pay for an external DynamoDB table strictly for lock coordination.
+- Simplified IAM Permissions: Streamlines security policies by consolidating state storage and state lock operations strictly under S3 permissions (s3:PutObject, s3:GetObject, s3:DeleteObject for .tflock files) without needing DynamoDB policy statements.
