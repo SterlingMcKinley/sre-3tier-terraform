@@ -1,6 +1,10 @@
-# SRE Chaos Engineering Exercise - 3 Tier Terraform
+# 3 Tier Infra Terraform Build w/ SRE Chaos Engineering
 
-This project demonstrates IaC provisioning and SRE chaos engineer. Also, this projest addresses 4 fundemental reliability challenges: 1. Single Points of Failure (SPOFs) & Regional Outages 2. Insecure Direct Exposure & "Configuration Drift" 3. Manual Incident Response & High MTTR (Mean Time to Recovery) 4. "Hope-Based" Reliability Testing
+This project demonstrates IaC provisioning and SRE chaos engineer. Also, this projest addresses 4 fundemental reliability challenges: 
+  * Single Points of Failure (SPOFs) & Regional Outages 
+  * Insecure Direct Exposure & "Configuration Drift" 
+  * Manual Incident Response & High MTTR (Mean Time to Recovery)
+  * "Hope-Based" Reliability Testing
 
 ## Architecture Diagram
 
