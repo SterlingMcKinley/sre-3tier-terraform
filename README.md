@@ -56,3 +56,35 @@ rds_endpoint = "sre-db-instance.xxxx.us-east-1.rds.amazonaws.com:5432"
 ```
 
 <img width="722" height="162" alt="output1" src="https://github.com/user-attachments/assets/3dd689de-345d-484e-8788-85b7c964b7dc" />
+
+6.  Observability & Steady-State Verification
+
+Before injecting failure, verify that traffic is load-balanced across multiple Availability Zones in real time.
+
+```bash
+
+ALB_URL=$(terraform output -raw alb_dns_name)
+
+while true; do
+  RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" "$ALB_URL")
+  STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS" | cut -d':' -f2)
+  BODY=$(echo "$RESPONSE" | grep "Served from")
+  echo "[$(date +'%T')] Status: $STATUS | $BODY"
+  sleep 1
+done
+```
+
+Expected Output:
+
+```bash
+[12:00:01] Status: 200 | <h1>SRE Resiliency Test OK</h1><p>Served from Instance: <b>i-0a1234567</b> in AZ: <b>us-east-1a</b></p>
+[12:00:02] Status: 200 | <h1>SRE Resiliency Test OK</h1><p>Served from Instance: <b>i-0b9876543</b> in AZ: <b>us-east-1b</b></p>
+```
+
+7. Monitor Health State (AWS CLI)
+
+```bash
+TG_ARN=$(aws elbv2 describe-target-groups --names "sre-app-tg" --query "TargetGroups[0].TargetGroupArn" --output text)
+
+watch -n 2 "aws elbv2 describe-target-health --target-group-arn $TG_ARN --query 'TargetHealthDescriptions[*].[Target.Id, TargetHealth.State]' --output table"
+```
