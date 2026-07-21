@@ -1,0 +1,26 @@
+{
+  "description": "SRE Chaos Experiment: Terminate 50 percent of EC2 instances in ASG",
+  "targets": {
+    "AppInstances": {
+      "resourceType": "aws:ec2:instance",
+      "resourceTags": {
+        "aws:autoscaling:groupName": "sre-asg"
+      },
+      "selectionMode": "PERCENT(50)"
+    }
+  },
+  "actions": {
+    "TerminateInstances": {
+      "actionId": "aws:ec2:terminate-instances",
+      "parameters": {},
+      "targets": {
+        "Instances": "AppInstances"
+      }
+    }
+  },
+  "stopConditions": [
+    {
+      "source": "none"
+    }
+  ]
+}
