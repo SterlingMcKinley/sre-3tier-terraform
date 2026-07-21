@@ -88,3 +88,37 @@ TG_ARN=$(aws elbv2 describe-target-groups --names "sre-app-tg" --query "TargetGr
 
 watch -n 2 "aws elbv2 describe-target-health --target-group-arn $TG_ARN --query 'TargetHealthDescriptions[*].[Target.Id, TargetHealth.State]' --output table"
 ```
+
+<img width="1136" height="195" alt="c4" src="https://github.com/user-attachments/assets/d3806e26-3b0b-4211-9896-d34077e14a95" />
+
+8. Chaos Engineering & Resiliency Validation
+
+  Register AWS FIS Experiment Template
+
+  ```bash
+FIS_ROLE_ARN=$(terraform output -raw fis_role_arn)
+
+aws fis create-experiment-template \
+  --role-arn $FIS_ROLE_ARN \
+  --cli-input-json file://chaos_experiment.json
+  ```
+(The expected output will be a display in JSON format. Locate and copy the EXPERIMENT_TEMPLATE_ID)
+
+9. Execute Failure Injection
+
+```bash
+aws fis start-experiment --experiment-template-id <YOUR_EXPERIMENT_TEMPLATE_ID>
+```
+
+(The expected output will be a display in JSON format. Review output and status updates of the experiment.)
+
+<img width="1076" height="487" alt="experiement1" src="https://github.com/user-attachments/assets/97e49c30-76ea-462c-adbd-b7bdd99b3594" />
+
+While the experient is in-progress  the AWS CLI command will update every 2/3 secs
+
+<img width="1125" height="227" alt="c3" src="https://github.com/user-attachments/assets/51d3c842-6a04-4c98-86f5-87b0f1976c5e" />
+<img width="1127" height="192" alt="chaos1" src="https://github.com/user-attachments/assets/82dd10c1-65dd-4716-995e-c0e3dd609b4e" />
+<img width="1118" height="210" alt="c2" src="https://github.com/user-attachments/assets/493e28c2-468b-4a33-bec5-fb1dd642a373" />
+<img width="1136" height="195" alt="c4" src="https://github.com/user-attachments/assets/2e5cd573-024c-40d5-b421-8733b40ad8a3" />
+
+
