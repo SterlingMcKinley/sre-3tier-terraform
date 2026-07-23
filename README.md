@@ -1,6 +1,6 @@
 # 3 Tier Infra Terraform Build w/ SRE Chaos Engineering
 
-This project demonstrates IaC provisioning and SRE chaos engineer. Also, this projest addresses 4 fundemental reliability challenges:
+This project demonstrates IaC provisioning and SRE chaos engineering. Also, this project addresses 4 fundamental reliability challenges:
 
 - Single Points of Failure (SPOFs) & Regional Outages
 - Insecure Direct Exposure & "Configuration Drift"
