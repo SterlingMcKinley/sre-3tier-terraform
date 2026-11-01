@@ -124,13 +124,13 @@ While the experient is in-progress the AWS CLI command will update every 2/3 sec
 
 ## Issues / Lessons Learned
 
-### Transitioning to Native S3 State Locking
+### Remote State and Locking
 
-Previously, storing remote Terraform state in Amazon S3 required a secondary AWS service—an Amazon DynamoDB table configured with a LockID primary key—to manage state locking and prevent concurrent executions.
+This project used local Terraform state. That works for a solo build, but for team use state should live in a remote backend with locking so two people can't apply at the same time.
 
-CURRENT Best practice: Native S3 state locking (via the use_lockfile = true parameter) uses conditional write requests (If-None-Match) directly inside S3 to manage concurrency. HashiCorp recommends native S3 locking and has deprecated the legacy dynamodb_table argument.
+Remote state in Amazon S3 historically used a DynamoDB table with a LockID partition key for state locking. Terraform now supports native S3 locking through use_lockfile = true, and HashiCorp has deprecated the dynamodb_table argument in favor of the S3 lockfile mechanism. DynamoDB-based locking remains supported for migration purposes but is planned for removal in a future minor release.
 
-Key Benefits:
+Key benefits:
 
-- Reduced Complexity & Cost: Eliminates the need to bootstrap, manage, and pay for an external DynamoDB table strictly for lock coordination.
-- Simplified IAM Permissions: Streamlines security policies by consolidating state storage and state lock operations strictly under S3 permissions (s3:PutObject, s3:GetObject, s3:DeleteObject for .tflock files) without needing DynamoDB policy statements.
+- **Reduced complexity and cost:** no DynamoDB table to bootstrap, manage, or pay for just to coordinate locks.
+- **Simpler IAM permissions:** state storage and locking both fall under S3 permissions (`s3:GetObject`, `s3:PutObject`, `s3:DeleteObject` for the `.tflock` file), with no DynamoDB policy statements.
