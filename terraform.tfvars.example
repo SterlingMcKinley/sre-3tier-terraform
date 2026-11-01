@@ -1,0 +1,5 @@
+aws_region  = "us-east-1"
+environment = "production"
+db_name     = "sredb"
+db_username = "sreadmin"
+db_password = "CHANGE_ME"
